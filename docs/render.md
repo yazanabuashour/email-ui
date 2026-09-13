@@ -70,9 +70,12 @@ present. An empty summary heading omits its heading element; an empty footer
 omits its row. Empty header metadata and preheader produce no invented text.
 
 Nonempty links and all image URLs must be ordinary absolute HTTP(S) URLs with a
-host, no credentials, whitespace, control characters, or backslashes. The
-renderer never fetches them. Empty links render as spans; empty image URLs fail.
-Validated URL strings retain their original bytes before HTML escaping. HTML
+host, no credentials, whitespace, or control characters. Backslashes are
+rejected in the scheme, authority, and path; they are allowed after the first
+query (`?`) or fragment (`#`) delimiter, where they are URL data rather than
+path separators. The renderer never fetches URLs. Empty links render as spans;
+empty image URLs fail. Validated URL strings retain their original bytes before
+HTML escaping, including query and fragment backslashes. HTML
 text and attributes use the original SiftWire escaping (`&`, `<`, `>`, `"`, `'`).
 
 The CLI retains the 1 MiB stdin tripwire inherited from Mailgate's request

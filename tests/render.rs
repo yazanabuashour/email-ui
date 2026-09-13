@@ -33,7 +33,8 @@ fn urls_and_nested_fields_share_one_safe_contract() -> Result<(), Box<dyn std::e
         "https:///private-value-marker",
         "https://example.test/\nprivate-value-marker",
         "https://example.test/ private-value-marker",
-        "https://example.test\\private-value-marker",
+        "https://example.test\\private-value-marker?query=value",
+        "https://example.test/path\\private-value-marker#fragment",
         "//example.test/private-value-marker",
     ] {
         let mut changed = document.clone();
@@ -60,13 +61,34 @@ fn urls_and_nested_fields_share_one_safe_contract() -> Result<(), Box<dyn std::e
         render_json(&serde_json::to_vec(&request)?),
         Err(RenderError::InvalidRequest)
     );
-    let mut ordinary = document;
-    ordinary["sections"][0]["rows"][0]["url"] = json!("HTTP://example.test/?a=1&b=2");
-    let result = render(&serde_json::from_value(ordinary)?)?;
-    assert!(
-        result.html.contains("HTTP://example.test/?a=1&amp;b=2"),
-        "safe links retain exact original bytes before escaping"
-    );
+    for (url, escaped) in [
+        (
+            "HTTP://example.test/?a=1&b=2",
+            "HTTP://example.test/?a=1&amp;b=2",
+        ),
+        (
+            r"https://example.test/article?pattern=\d",
+            r"https://example.test/article?pattern=\d",
+        ),
+        (
+            r"https://example.test/article#pattern=\d",
+            r"https://example.test/article#pattern=\d",
+        ),
+    ] {
+        let mut ordinary = document.clone();
+        ordinary["sections"][0]["rows"][0]["url"] = json!(url);
+        let result = render(&serde_json::from_value(ordinary.clone())?)?;
+        let request = json!({"schema_version": RENDER_REQUEST_SCHEMA, "document": ordinary});
+        assert_eq!(render_json(&serde_json::to_vec(&request)?)?, result);
+        assert!(
+            result.html.contains(escaped),
+            "safe links retain exact original bytes before escaping"
+        );
+        assert!(
+            result.text.contains(url),
+            "plain text retains original URL bytes"
+        );
+    }
     Ok(())
 }
 

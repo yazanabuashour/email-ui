@@ -109,13 +109,14 @@ fn validate_url(value: &str, empty_allowed: bool) -> Result<(), RenderError> {
     }
     let (scheme, remainder) = value.split_once("://").ok_or(RenderError::UnsafeUrl)?;
     let authority = remainder.split(['/', '?', '#']).next().unwrap_or_default();
+    let before_query_or_fragment = value.split(['?', '#']).next().unwrap_or_default();
     if !(scheme.eq_ignore_ascii_case("http") || scheme.eq_ignore_ascii_case("https"))
         || authority.is_empty()
         || authority.contains('@')
         || value
             .chars()
             .any(|character| character.is_whitespace() || character.is_control())
-        || value.contains('\\')
+        || before_query_or_fragment.contains('\\')
     {
         return Err(RenderError::UnsafeUrl);
     }
