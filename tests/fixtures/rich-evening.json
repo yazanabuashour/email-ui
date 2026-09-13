@@ -1,0 +1,76 @@
+{
+  "title": "SiftWire Evening brief",
+  "heading": "SiftWire",
+  "preheader": "1 story, 1 release, 2 sports updates.",
+  "header": {
+    "edition": "Evening",
+    "date": "Thu, Aug 27"
+  },
+  "footer": "Times: America/Chicago",
+  "sections": [
+    {
+      "kind": "cards",
+      "heading": "New versions",
+      "rows": [
+        {
+          "title": "Release <one>",
+          "url": "https://example.test/?a=1&b=2",
+          "eyebrow": "Example"
+        }
+      ]
+    },
+    {
+      "kind": "stories",
+      "heading": "News",
+      "rows": [
+        {
+          "title": "News <one>",
+          "url": "",
+          "eyebrow": "Example & Co · Example & Co"
+        }
+      ]
+    },
+    {
+      "kind": "schedule",
+      "heading": "Sports",
+      "groups": [
+        {
+          "heading": "Upcoming",
+          "rows": [
+            {
+              "weekday": "Sat",
+              "day": "29",
+              "month": "Aug",
+              "title": "Alpha vs Beta",
+              "url": "https://example.test/game",
+              "metadata": "Example League · 7:00 AM CDT",
+              "images": [
+                {
+                  "url": "https://images.example/alpha.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "Results",
+          "rows": [
+            {
+              "weekday": "Thu",
+              "day": "27",
+              "month": "Aug",
+              "title": "Gamma 2–1 Delta",
+              "url": "",
+              "metadata": "Example Cup · 7:00 PM CDT",
+              "images": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "notice": {
+    "label": "Source health",
+    "text": "Source <one> & source two unavailable"
+  }
+}

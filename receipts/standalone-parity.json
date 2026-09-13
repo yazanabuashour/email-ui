@@ -1,0 +1,22 @@
+{
+  "scope": "Actual offline release CLI comparison against the extracted Mailgate renderer using public synthetic fixtures; no configuration, credentials, network, or sends",
+  "old_binary_sha256": "c5a293458e22828ff2edecf61a68aac7abe9959b81a66d903db4bb1de7f1ab87",
+  "fixtures": [
+    {
+      "fixture": "examples/render-request.json",
+      "html_bytes": 2534,
+      "text_bytes": 174,
+      "html_sha256": "57ecef812d5426f23088e60f8135f4be517a06d999a70782c104f5e6f8572797",
+      "text_sha256": "67c81389d83cc5ba2feff2242d59cb096f24107098c683e9d901f09e3d26a028",
+      "comparison": "identical HTML and text bytes; only protocol namespace changed"
+    },
+    {
+      "fixture": "tests/fixtures/rich-evening.json",
+      "html_bytes": 6471,
+      "text_bytes": 423,
+      "html_sha256": "f8798c01f5479302846a64842842ec3249ba804998f321e8cb00949a5742bfe5",
+      "text_sha256": "1a8b86bbd42b56e9d83c8f075d5b7442c41db4ef1aefd7ca6635bee7427fcc21",
+      "comparison": "identical HTML and text bytes; only protocol namespace changed"
+    }
+  ]
+}

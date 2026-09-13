@@ -1,0 +1,19 @@
+{
+  "schema_version": "email-ui/render-request/v1",
+  "document": {
+    "title": "Example automation alert",
+    "heading": "Example automation",
+    "preheader": "A check needs attention.",
+    "header": { "edition": "Alert", "date": "" },
+    "footer": "Inspect before retrying.",
+    "sections": [
+      {
+        "kind": "summary",
+        "heading": "Check failed",
+        "lines": ["The fictional service check did not complete."],
+        "links": [{ "label": "Runbook", "url": "https://example.test/runbook" }]
+      }
+    ],
+    "notice": null
+  }
+}

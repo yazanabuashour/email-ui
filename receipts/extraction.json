@@ -1,0 +1,11 @@
+{
+  "source": "Mailgate extracted presentation crate; rich-evening golden frozen from SiftWire before migration",
+  "files": {
+    "src/document.rs": "3f9bc3a0c215aa08afec065f9db990e7cbe230ffab48463699e3b7a05a99ffdc",
+    "src/html.rs": "eaa45d9a1b6a0e375e370ff063e9c94c589aa9b34d8442863b8b42f5546a81b4",
+    "src/html/components.rs": "edb8b9139bff0e4e6b85d232094d6e4efb9e9726ebff64d0d47b5eba31ebc005",
+    "src/text.rs": "34dc0d6ad21b8bbc9fea9c5b9e4b33f78d71e5fe6e0d336ae9acb200edbeef78",
+    "tests/fixtures/rich-evening.json": "8e4b606332a2f53ea995a7220ce59709f5c9e62c4bcbc5863c13c7fd7ca6b799",
+    "tests/fixtures/rich-evening.html": "f8798c01f5479302846a64842842ec3249ba804998f321e8cb00949a5742bfe5"
+  }
+}

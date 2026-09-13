@@ -1,0 +1,35 @@
+{
+  "measured_on": "2026-09-13",
+  "resource": "stdin request",
+  "configured_limit_bytes": 1048576,
+  "scope": "Synthetic offline renderer fixtures only; no private messages or production receipts",
+  "measurements": [
+    {
+      "fixture": "examples/render-request.json",
+      "bytes": 560,
+      "command": "wc -c < examples/render-request.json"
+    },
+    {
+      "fixture": "crates/mailgate-ui/tests/fixtures/rich-evening.json",
+      "document_bytes": 1728,
+      "render_request_bytes": 1947,
+      "measurement": "Wrap parsed document as {schema_version: mailgate/render-request/v1, document: document}; Python json.dumps(indent=2, ensure_ascii=False), append newline, encode UTF-8, then measure len(bytes).",
+      "coverage": "Cards, stories, upcoming/results schedule, decorative image, empty links, notice, timezone metadata, and escaping"
+    }
+  ],
+  "decision": "Retain the inherited Mailgate 1 MiB transport-compatible stdin tripwire, well above the representative synthetic inputs; preserve the original measurements and remeasure after the schema rename. This is compatibility with the former boundary, not a newly sized content budget. Do not introduce field-length or row-count limits.",
+  "origin": "Inherited from Mailgate render; original measurements below are retained unchanged, with original fixture paths and schema.",
+  "standalone_measurements": [
+    {
+      "fixture": "examples/render-request.json",
+      "fixture_bytes": 560,
+      "render_request_bytes": 560
+    },
+    {
+      "fixture": "tests/fixtures/rich-evening.json",
+      "fixture_bytes": 1728,
+      "render_request_bytes": 1947
+    }
+  ],
+  "standalone_measurement": "Example: measure file bytes. Golden document: Python json.dumps({schema_version: email-ui/render-request/v1, document: parsed_document}, indent=2, ensure_ascii=False), append newline, encode UTF-8, measure len(bytes). Reproduce with scripts/check-offline.py."
+}
