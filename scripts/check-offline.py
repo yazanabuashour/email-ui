@@ -59,16 +59,32 @@ def main():
             }
             assert measured == item, "remeasure and update the input receipt"
             output = render(payload, directory)
+            # Preserve historical receipts while allowing the mobile header change.
+            original_html = (
+                output["html"]
+                .replace(' class="header-cell"', "")
+                .replace(' class="header-cell header-meta"', "")
+                .replace(
+                    "  .header-cell { display:block !important; width:100% !important; }\n"
+                    "  .header-meta { padding-top:8px !important; text-align:left !important; }\n",
+                    "",
+                )
+            )
             if path == "tests/fixtures/rich-evening.json":
-                assert output["html"].encode() == (
+                assert original_html.encode() == (
                     ROOT / "tests/fixtures/rich-evening.html"
                 ).read_bytes(), "release CLI must preserve the frozen SiftWire HTML"
             hashes = {
                 f"{kind}_sha256": hashlib.sha256(output[kind].encode()).hexdigest()
                 for kind in ("html", "text")
             }
-            for name, digest in hashes.items():
-                assert digest == PARITY[path][name], "preserve pre-extraction body bytes"
+            assert (
+                hashlib.sha256(original_html.encode()).hexdigest()
+                == PARITY[path]["html_sha256"]
+            ), "preserve pre-extraction HTML except the approved mobile header"
+            assert (
+                hashes["text_sha256"] == PARITY[path]["text_sha256"]
+            ), "preserve pre-extraction plain-text bytes"
             measurements.append({**measured, **hashes})
     print(json.dumps({"offline_release_parity": "pass", "measurements": measurements}))
 

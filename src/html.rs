@@ -62,6 +62,8 @@ fn document_start(document: &Document) -> String {
   .mobile-pad {{ padding-left:16px !important; padding-right:16px !important; }}
   .story-title {{ font-size:16px !important; line-height:21px !important; }}
   .date-cell {{ width:45px !important; }}
+  .header-cell {{ display:block !important; width:100% !important; }}
+  .header-meta {{ padding-top:8px !important; text-align:left !important; }}
 }}
 </style>
 </head>
@@ -72,8 +74,8 @@ fn document_start(document: &Document) -> String {
 <table role="presentation" width="680" cellspacing="0" cellpadding="0" border="0" class="email-shell" style="width:680px;max-width:680px;background:#ffffff;border-top:3px solid {ACCENT};">
 <tr><td class="mobile-pad" style="padding:13px 20px 12px;border-bottom:1px solid {BORDER};">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr>
-<td valign="top"><div style="font-family:Georgia,'Times New Roman',serif;font-size:21px;line-height:25px;font-weight:bold;color:{TEXT};">{heading}</div><div style="margin-top:3px;font-size:11px;line-height:15px;color:{MUTED};">{preheader}</div></td>
-<td align="right" valign="top" style="font-size:11px;line-height:15px;color:{SECONDARY};">{edition}<br><span style="color:{MUTED};">{date}</span></td>
+<td class="header-cell" valign="top"><div style="font-family:Georgia,'Times New Roman',serif;font-size:21px;line-height:25px;font-weight:bold;color:{TEXT};">{heading}</div><div style="margin-top:3px;font-size:11px;line-height:15px;color:{MUTED};">{preheader}</div></td>
+<td class="header-cell header-meta" align="right" valign="top" style="font-size:11px;line-height:15px;color:{SECONDARY};">{edition}<br><span style="color:{MUTED};">{date}</span></td>
 </tr></table>
 </td></tr>"#,
         title = escape(&document.title),

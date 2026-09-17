@@ -10,10 +10,25 @@ use serde_json::{Value, json};
 const DOCUMENT: &str = include_str!("fixtures/rich-evening.json");
 
 #[test]
-fn shared_components_preserve_frozen_siftwire_bytes() -> Result<(), Box<dyn std::error::Error>> {
+fn shared_components_preserve_frozen_siftwire_bytes_except_mobile_header()
+-> Result<(), Box<dyn std::error::Error>> {
     let document: Document = serde_json::from_str(DOCUMENT)?;
     let result = render(&document)?;
-    assert_eq!(result.html, include_str!("fixtures/rich-evening.html"));
+    // Keep the original oracle; allow only the approved responsive header delta.
+    let expected = include_str!("fixtures/rich-evening.html")
+        .replace(
+            "  .date-cell { width:45px !important; }",
+            "  .date-cell { width:45px !important; }\n  .header-cell { display:block !important; width:100% !important; }\n  .header-meta { padding-top:8px !important; text-align:left !important; }",
+        )
+        .replace(
+            "<td valign=\"top\"><div style=\"font-family:Georgia",
+            "<td class=\"header-cell\" valign=\"top\"><div style=\"font-family:Georgia",
+        )
+        .replace(
+            "<td align=\"right\" valign=\"top\" style=\"font-size:11px;line-height:15px;color:#a14200;\">",
+            "<td class=\"header-cell header-meta\" align=\"right\" valign=\"top\" style=\"font-size:11px;line-height:15px;color:#a14200;\">",
+        );
+    assert_eq!(result.html, expected);
     let request = RenderRequest {
         schema_version: RENDER_REQUEST_SCHEMA.to_owned(),
         document,

@@ -68,6 +68,8 @@ format all counts, labels, dates, timezones, and metadata. The renderer neither
 sorts nor infers domain rules. An explicitly supplied empty section remains
 present. An empty summary heading omits its heading element; an empty footer
 omits its row. Empty header metadata and preheader produce no invented text.
+On mobile, header metadata stacks below the heading and preheader; the desktop
+header keeps its two-column layout.
 
 Nonempty links and all image URLs must be ordinary absolute HTTP(S) URLs with a
 host, no credentials, whitespace, or control characters. Backslashes are
@@ -143,6 +145,7 @@ upgrade must never rewrite a previously persisted request. SiftWire keeps its
 existing plain-text generation and maps domain data to shared HTML components.
 
 The shared component golden fixture was frozen from SiftWire's original renderer
-before migration. email-ui checks it byte-for-byte and checks library/CLI
-parity. SiftWire additionally owns fixtures for domain ordering, morning/evening,
-timezone rollover, empty content, escaping, and multiple images.
+before migration. email-ui checks it byte-for-byte except for the explicitly
+approved mobile-header CSS and classes, and checks library/CLI parity. SiftWire
+additionally owns fixtures for domain ordering, morning/evening, timezone rollover,
+empty content, escaping, and multiple images.
