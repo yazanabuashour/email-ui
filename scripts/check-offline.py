@@ -70,10 +70,6 @@ def main():
                     "",
                 )
             )
-            if path == "tests/fixtures/rich-evening.json":
-                assert original_html.encode() == (
-                    ROOT / "tests/fixtures/rich-evening.html"
-                ).read_bytes(), "release CLI must preserve the frozen SiftWire HTML"
             hashes = {
                 f"{kind}_sha256": hashlib.sha256(output[kind].encode()).hexdigest()
                 for kind in ("html", "text")

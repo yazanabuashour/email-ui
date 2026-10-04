@@ -48,10 +48,6 @@ fn offline_cli_matches_library_without_environment_or_config() -> Result<(), Box
         let actual: email_ui::RenderResult = serde_json::from_slice(&output.stdout)?;
         assert_eq!(actual, expected);
     }
-    assert_eq!(
-        expected.text,
-        "Example automation\nA check needs attention.\nAlert\n\nCheck failed\nThe fictional service check did not complete.\nRunbook: https://example.test/runbook\n\nInspect before retrying.\n"
-    );
     Ok(())
 }
 

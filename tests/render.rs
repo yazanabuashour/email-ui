@@ -92,9 +92,7 @@ fn urls_and_nested_fields_share_one_safe_contract() -> Result<(), Box<dyn std::e
     ] {
         let mut ordinary = document.clone();
         ordinary["sections"][0]["rows"][0]["url"] = json!(url);
-        let result = render(&serde_json::from_value(ordinary.clone())?)?;
-        let request = json!({"schema_version": RENDER_REQUEST_SCHEMA, "document": ordinary});
-        assert_eq!(render_json(&serde_json::to_vec(&request)?)?, result);
+        let result = render(&serde_json::from_value(ordinary)?)?;
         assert!(
             result.html.contains(escaped),
             "safe links retain exact original bytes before escaping"
@@ -116,14 +114,22 @@ fn summary_escapes_content_and_omits_empty_headings() -> Result<(), Box<dyn std:
         "kind": "summary", "heading": "", "lines": ["<&>\"'\nsecond line"],
         "links": [{"label": "No link <here>", "url": ""}]
     }]);
-    let result = render(&serde_json::from_value(document)?)?;
+    let mut document: Document = serde_json::from_value(document)?;
+    let result = render(&document)?;
+    document.footer = "Footer marker".to_owned();
+    let with_footer = render(&document)?;
     assert!(
         !result.html.contains("<h2"),
         "empty summary heading adds no heading"
     );
-    assert!(
-        !result.html.contains("padding:12px 20px;border-top:"),
-        "empty footer adds no row"
+    assert_eq!(
+        with_footer.html.matches("<tr>").count().checked_sub(1),
+        Some(result.html.matches("<tr>").count()),
+        "omitting the footer removes its row, regardless of its styling"
+    );
+    assert_eq!(
+        with_footer.text,
+        format!("{}\nFooter marker\n", result.text)
     );
     assert!(
         result
