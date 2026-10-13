@@ -25,10 +25,13 @@ def render(payload, directory):
         env={},
         check=True,
     )
-    assert not result.stderr, "successful rendering has no diagnostics"
+    if result.stderr:
+        raise SystemExit("successful rendering must have no diagnostics")
     output = json.loads(result.stdout)
-    assert set(output) == {"schema_version", "text", "html"}
-    assert output["schema_version"] == "email-ui/render-result/v1"
+    if set(output) != {"schema_version", "text", "html"}:
+        raise SystemExit("render result must contain only schema_version, text, and html")
+    if output["schema_version"] != "email-ui/render-result/v1":
+        raise SystemExit("unsupported render result schema")
     return output
 
 
@@ -57,7 +60,8 @@ def main():
                 "fixture_bytes": len(data),
                 "render_request_bytes": len(payload),
             }
-            assert measured == item, "remeasure and update the input receipt"
+            if measured != item:
+                raise SystemExit(f"{path}: remeasure and update the input receipt")
             output = render(payload, directory)
             # Preserve historical receipts while allowing the mobile header change.
             original_html = (
@@ -74,13 +78,15 @@ def main():
                 f"{kind}_sha256": hashlib.sha256(output[kind].encode()).hexdigest()
                 for kind in ("html", "text")
             }
-            assert (
+            if (
                 hashlib.sha256(original_html.encode()).hexdigest()
-                == PARITY[path]["html_sha256"]
-            ), "preserve pre-extraction HTML except the approved mobile header"
-            assert (
-                hashes["text_sha256"] == PARITY[path]["text_sha256"]
-            ), "preserve pre-extraction plain-text bytes"
+                != PARITY[path]["html_sha256"]
+            ):
+                raise SystemExit(
+                    f"{path}: preserve pre-extraction HTML except the approved mobile header"
+                )
+            if hashes["text_sha256"] != PARITY[path]["text_sha256"]:
+                raise SystemExit(f"{path}: preserve pre-extraction plain-text bytes")
             measurements.append({**measured, **hashes})
     print(json.dumps({"offline_release_parity": "pass", "measurements": measurements}))
 

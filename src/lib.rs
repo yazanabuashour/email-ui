@@ -1,4 +1,30 @@
 //! Offline, fixed email components. Callers own notification policy and metadata.
+//!
+//! Render a typed document with [`render`], or decode a versioned JSON request
+//! with [`render_json`]. Both return the same HTML and plain text and validate
+//! URLs without fetching them. Neither entry point applies the CLI's byte limit.
+//!
+//! ```
+//! use email_ui::{Document, Header, render};
+//!
+//! # fn main() -> Result<(), email_ui::RenderError> {
+//! let document = Document {
+//!     title: "Example alert".to_owned(),
+//!     heading: "Example automation".to_owned(),
+//!     preheader: "A check needs attention.".to_owned(),
+//!     header: Header {
+//!         edition: "Alert".to_owned(),
+//!         date: String::new(),
+//!     },
+//!     footer: String::new(),
+//!     sections: Vec::new(),
+//!     notice: None,
+//! };
+//! let result = render(&document)?;
+//! assert_eq!(result.text, "Example automation\nA check needs attention.\nAlert\n");
+//! # Ok(())
+//! # }
+//! ```
 mod document;
 mod html;
 mod text;

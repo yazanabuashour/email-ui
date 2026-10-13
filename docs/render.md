@@ -1,43 +1,19 @@
-# Render an email without sending it
+# Renderer contract
 
-`email-ui render` reads one JSON document from stdin and writes one JSON result
-to stdout. It has no configuration, credential, database, or network dependency.
-There is no configuration option or environment-variable interface.
+## CLI protocol
 
-```sh
-email-ui render < examples/render-request.json
-```
+`email-ui render` reads one JSON request from stdin and writes one JSON result
+to stdout. It has no configuration option or environment-variable interface,
+and no credential, database, or network dependency. For build and invocation
+commands, see [Build and render](../README.md#build-and-render).
 
-Input:
+Input has `schema_version` (`email-ui/render-request/v1`) and `document`.
+[The checked request example](../examples/render-request.json) shows a summary;
+[the rich document fixture](../tests/fixtures/rich-evening.json) shows cards,
+stories, and schedules without the request envelope. Output has exactly
+`schema_version` (`email-ui/render-result/v1`), `text`, and `html`.
 
-```json
-{
-  "schema_version": "email-ui/render-request/v1",
-  "document": {
-    "title": "Example alert",
-    "heading": "Example automation",
-    "preheader": "A check needs attention.",
-    "header": { "edition": "Alert", "date": "" },
-    "footer": "Inspect before retrying.",
-    "sections": [
-      {
-        "kind": "summary",
-        "heading": "Check failed",
-        "lines": ["The fictional service check did not complete."],
-        "links": [{ "label": "Runbook", "url": "https://example.test/runbook" }]
-      }
-    ],
-    "notice": null
-  }
-}
-```
-
-Output has exactly `schema_version` (`email-ui/render-result/v1`), `text`, and
-`html`. The caller still supplies its own subject to `mailgate send`; the HTML
-`title` is not a transport subject. Rendering does not send, persist, or prove
-provider acceptance. Keep output out of logs because it contains message bodies.
-
-## Build a presentation document
+## Document fields
 
 Every field below is required unless explicitly optional. Textual leaves are
 strings, including already-formatted dates and schedule day numbers. Every
@@ -71,6 +47,8 @@ omits its row. Empty header metadata and preheader produce no invented text.
 On mobile, header metadata stacks below the heading and preheader; the desktop
 header keeps its two-column layout.
 
+## URLs and escaping
+
 Nonempty links and all image URLs must be ordinary absolute HTTP(S) URLs with a
 host, no credentials, whitespace, or control characters. Backslashes are
 rejected in the scheme, authority, and path; they are allowed after the first
@@ -80,6 +58,8 @@ empty image URLs fail. Validated URL strings retain their original bytes before
 HTML escaping, including query and fragment backslashes. HTML
 text and attributes use the original SiftWire escaping (`&`, `<`, `>`, `"`, `'`).
 
+## Input boundary and errors
+
 The CLI retains the 1 MiB stdin tripwire inherited from Mailgate's request
 reader for transport compatibility, using its own bounded reader. It reads at
 most 1,048,577 bytes to detect overflow; exactly 1,048,576 bytes is accepted.
@@ -88,8 +68,22 @@ The synthetic input receipt is
 [`receipts/render-input-size.json`](../receipts/render-input-size.json). There
 are no additional field-length or row-count limits. Invalid JSON, unknown fields
 or variants, wrong types, unsupported versions, and unsafe URLs return nonzero
-with `email-ui/error/v1` JSON on stderr and no body on stdout. Diagnostics do not
-echo input values or field names.
+with `email-ui/error/v1` JSON on stderr and no body on stdout. The error envelope
+contains `schema_version` and `error`; `error` contains `code`, `path`, and
+`message`. Diagnostics do not echo input values or unknown field names.
+
+| Code | Meaning | Path |
+| --- | --- | --- |
+| `invalid_render_request` | Invalid JSON, fields, variants, or types | `$` |
+| `unsupported_version` | Unsupported request schema version | `$` |
+| `unsafe_render_url` | Invalid link or image URL | `$` |
+| `input_limit` | Stdin exceeds the byte tripwire | `stdin request` |
+| `input_io` | Stdin could not be read or measured | `stdin request` |
+| `output_io` | Result could not be written or finished | `stdout` |
+
+Output I/O failures can leave partial stdout. Command-line usage errors use
+Clap's ordinary text diagnostics, not the JSON envelope. `--help` and `--version`
+also use text output.
 
 ## Plain-text rules
 
@@ -109,7 +103,7 @@ section starts with a blank line. Empty ordinary text leaves add no line.
 The HTML document title and decorative images add no plain text. No wrapping,
 trimming, sorting, or invented labels occur.
 
-## Use the Rust library
+## Rust API
 
 The `email-ui` package exposes these task interfaces as `email_ui::render` and
 `email_ui::render_json`:
@@ -125,27 +119,6 @@ DTOs (data transfer objects). `Section` variants are `Cards`, `Stories`,
 `Schedule`, and `Summary`. `RENDER_REQUEST_SCHEMA` and `RENDER_RESULT_SCHEMA`
 identify the JSON protocols. Both entry points share URL validation and return
 the same rendered bytes. `RenderError` contains only static diagnostic variants.
-The library does not impose the CLI's byte tripwire on already-owned documents.
-
-Rust consumers own their dependency and lockfile. During coordinated local work,
-a path dependency can point to `../email-ui` (adjust relative to the caller's
-manifest). For a deployable cross-repository build, pin the reviewed public
-email-ui Git revision and refresh the consumer lockfile after that revision is
-available. Do not deploy a developer-specific absolute path. Public distribution
-requires explicit owner approval. Transport and delivery state remain separate
-in Mailgate. Updating the installed email-ui binary updates Python/shell callers
-of `email-ui render`; Rust consumers require their own rebuild.
-
-## Preserve existing send identities
-
-The `mailgate/send-request/v1` contract has not changed: callers provide exact
-text and HTML. Persist the chosen bodies before the first send and reuse them
-for every retry and reconciliation, rather than rendering them again. A renderer
-upgrade must never rewrite a previously persisted request. SiftWire keeps its
-existing plain-text generation and maps domain data to shared HTML components.
-
-The shared component golden fixture was frozen from SiftWire's original renderer
-before migration. email-ui checks it byte-for-byte except for the explicitly
-approved mobile-header CSS and classes, and checks library/CLI parity. SiftWire
-additionally owns fixtures for domain ordering, morning/evening, timezone rollover,
-empty content, escaping, and multiple images.
+Neither library entry point imposes the CLI's byte tripwire. See
+[Integrate a caller](../README.md#integrate-a-caller) for dependencies, rebuilds,
+and the requirement to preserve already-rendered delivery bodies.
