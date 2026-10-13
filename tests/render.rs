@@ -62,12 +62,27 @@ fn urls_and_nested_fields_share_one_safe_contract() -> Result<(), Box<dyn std::e
             Err(RenderError::UnsafeUrl)
         );
     }
-    let mut image = document.clone();
-    image["sections"][2]["groups"][0]["rows"][0]["images"][0]["url"] = json!("");
-    assert_eq!(
-        render(&serde_json::from_value(image)?),
-        Err(RenderError::UnsafeUrl)
-    );
+    for images in [
+        json!([{"url": ""}]),
+        json!([
+            {"url": "https://images.example/one.png"},
+            {"url": "https://images.example/two.png"},
+            {"url": "javascript:private-value-marker"}
+        ]),
+    ] {
+        let mut image = document.clone();
+        image["sections"][2]["groups"][0]["rows"][0]["images"] = images;
+        assert_eq!(
+            render(&serde_json::from_value(image.clone())?),
+            Err(RenderError::UnsafeUrl),
+            "all supplied image URLs must be safe, even when not displayed"
+        );
+        let request = json!({"schema_version": RENDER_REQUEST_SCHEMA, "document": image});
+        assert_eq!(
+            render_json(&serde_json::to_vec(&request)?),
+            Err(RenderError::UnsafeUrl)
+        );
+    }
     let mut unknown = document.clone();
     unknown["sections"][2]["groups"][0]["rows"][0]["images"][0]["private-value-marker"] =
         json!("private-value-marker");
