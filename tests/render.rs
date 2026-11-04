@@ -10,11 +10,10 @@ use serde_json::{Value, json};
 const DOCUMENT: &str = include_str!("fixtures/rich-evening.json");
 
 #[test]
-fn shared_components_preserve_frozen_siftwire_bytes_except_mobile_header()
+fn shared_components_preserve_frozen_bytes_except_approved_layout_fixes()
 -> Result<(), Box<dyn std::error::Error>> {
     let document: Document = serde_json::from_str(DOCUMENT)?;
     let result = render(&document)?;
-    // Keep the original oracle; allow only the approved responsive header delta.
     let expected = include_str!("fixtures/rich-evening.html")
         .replace(
             "  .date-cell { width:45px !important; }",
@@ -28,6 +27,10 @@ fn shared_components_preserve_frozen_siftwire_bytes_except_mobile_header()
             "<td align=\"right\" valign=\"top\" style=\"font-size:11px;line-height:15px;color:#a14200;\">",
             "<td class=\"header-cell header-meta\" align=\"right\" valign=\"top\" style=\"font-size:11px;line-height:15px;color:#a14200;\">",
         );
+    let expected = expected.replace(
+        "</div>\n</td><td valign=\"middle\" style=\"padding:9px 10px;",
+        "</div>\n</td><td colspan=\"2\" valign=\"middle\" style=\"padding:9px 10px;",
+    );
     assert_eq!(result.html, expected);
     let request = RenderRequest {
         schema_version: RENDER_REQUEST_SCHEMA.to_owned(),

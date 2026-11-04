@@ -37,7 +37,8 @@ Schedule rows contain `weekday`, `day`, `month`, `title`, `url`, `metadata`,
 and optional `images` of `{url}`. Images are decorative: the fixed component
 renders the first two with empty alternative text, matching the original
 SiftWire component. All supplied image URLs are validated, including undisplayed
-images. This is a component layout, not an input-count limit.
+images. This is a component layout, not an input-count limit. Rows without
+images span the image and text columns so their text retains the full width.
 
 Callers choose section/group order, omit unwanted sections and notices, and
 format all counts, labels, dates, timezones, and metadata. The renderer neither

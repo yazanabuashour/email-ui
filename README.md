@@ -46,11 +46,11 @@ Generated Rust API documentation is in `target/doc/email_ui/index.html`.
 Keep the independent regression oracles intact:
 
 - `tests/fixtures/rich-evening.html` is frozen from SiftWire's original renderer.
-  `tests/render.rs` compares it byte-for-byte except for the approved mobile-header
-  CSS and classes. Do not regenerate it to make a test pass.
+  `tests/render.rs` compares it byte-for-byte except for the responsive header
+  and image-free schedule-column fixes. Do not regenerate it to make a test pass.
 - [The extraction parity receipt](receipts/standalone-parity.json) records old/new
   offline release renders. `scripts/check-offline.py` checks the original HTML
-  hash after removing that same header delta, and the unchanged plain-text hash.
+  hash after removing those same layout deltas, and the unchanged plain-text hash.
 - [The input-size receipt](receipts/render-input-size.json) records the inherited
   1 MiB stdin tripwire and synthetic request measurements. Remeasure before
   changing the boundary; it is not an ordinary content budget. The library has

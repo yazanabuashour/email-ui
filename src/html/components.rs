@@ -78,6 +78,11 @@ fn schedule_row(output: &mut String, row: &ScheduleRow) {
         month = escape(&row.month),
     );
     images(output, &row.images);
+    let colspan = if row.images.is_empty() {
+        " colspan=\"2\""
+    } else {
+        ""
+    };
     let title = linked_title(
         &row.title,
         &row.url,
@@ -85,7 +90,7 @@ fn schedule_row(output: &mut String, row: &ScheduleRow) {
     );
     let _result = write!(
         output,
-        r#"<td valign="middle" style="padding:9px 10px;border-bottom:1px solid {BORDER};">
+        r#"<td{colspan} valign="middle" style="padding:9px 10px;border-bottom:1px solid {BORDER};">
 {title}
 <div style="margin-top:3px;font-size:11px;line-height:15px;color:{MUTED};">{metadata}</div>
 </td></tr>"#,

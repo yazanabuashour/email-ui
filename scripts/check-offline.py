@@ -63,9 +63,12 @@ def main():
             if measured != item:
                 raise SystemExit(f"{path}: remeasure and update the input receipt")
             output = render(payload, directory)
-            # Preserve historical receipts while allowing the mobile header change.
             original_html = (
                 output["html"]
+                .replace(
+                    '</div>\n</td><td colspan="2" valign="middle" style="padding:9px 10px;',
+                    '</div>\n</td><td valign="middle" style="padding:9px 10px;',
+                )
                 .replace(' class="header-cell"', "")
                 .replace(' class="header-cell header-meta"', "")
                 .replace(
@@ -83,7 +86,7 @@ def main():
                 != PARITY[path]["html_sha256"]
             ):
                 raise SystemExit(
-                    f"{path}: preserve pre-extraction HTML except the approved mobile header"
+                    f"{path}: preserve pre-extraction HTML except the approved layout fixes"
                 )
             if hashes["text_sha256"] != PARITY[path]["text_sha256"]:
                 raise SystemExit(f"{path}: preserve pre-extraction plain-text bytes")
