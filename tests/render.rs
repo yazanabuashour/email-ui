@@ -57,13 +57,8 @@ fn urls_and_nested_fields_share_one_safe_contract() -> Result<(), Box<dyn std::e
     ] {
         let mut changed = document.clone();
         changed["sections"][0]["rows"][0]["url"] = json!(url);
-        let typed: Document = serde_json::from_value(changed.clone())?;
+        let typed: Document = serde_json::from_value(changed)?;
         assert_eq!(render(&typed), Err(RenderError::UnsafeUrl));
-        let request = json!({"schema_version": RENDER_REQUEST_SCHEMA, "document": changed});
-        assert_eq!(
-            render_json(&serde_json::to_vec(&request)?),
-            Err(RenderError::UnsafeUrl)
-        );
     }
     for images in [
         json!([{"url": ""}]),

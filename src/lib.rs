@@ -108,20 +108,20 @@ fn validate_urls(document: &Document) -> Result<(), RenderError> {
         match section {
             Section::Cards { rows, .. } | Section::Stories { rows, .. } => {
                 for row in rows {
-                    validate_url(&row.url, true)?;
+                    validate_link(&row.url)?;
                 }
             }
             Section::Schedule { groups, .. } => {
                 for row in groups.iter().flat_map(|group| &group.rows) {
-                    validate_url(&row.url, true)?;
+                    validate_link(&row.url)?;
                     for image in &row.images {
-                        validate_url(&image.url, false)?;
+                        validate_required_url(&image.url)?;
                     }
                 }
             }
             Section::Summary { links, .. } => {
                 for link in links {
-                    validate_url(&link.url, true)?;
+                    validate_link(&link.url)?;
                 }
             }
         }
@@ -129,10 +129,15 @@ fn validate_urls(document: &Document) -> Result<(), RenderError> {
     Ok(())
 }
 
-fn validate_url(value: &str, empty_allowed: bool) -> Result<(), RenderError> {
-    if empty_allowed && value.is_empty() {
-        return Ok(());
+fn validate_link(value: &str) -> Result<(), RenderError> {
+    if value.is_empty() {
+        Ok(())
+    } else {
+        validate_required_url(value)
     }
+}
+
+fn validate_required_url(value: &str) -> Result<(), RenderError> {
     let (scheme, remainder) = value.split_once("://").ok_or(RenderError::UnsafeUrl)?;
     let authority = remainder.split(['/', '?', '#']).next().unwrap_or_default();
     let before_query_or_fragment = value.split(['?', '#']).next().unwrap_or_default();

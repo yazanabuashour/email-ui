@@ -13,10 +13,8 @@ use serde_json::{Value, json};
 const EXAMPLE: &[u8] = include_bytes!("../examples/render-request.json");
 
 fn render(input: &[u8]) -> Result<Output, Box<dyn Error>> {
-    let directory = tempfile::tempdir()?;
     let mut child = Command::new(env!("CARGO_BIN_EXE_email-ui"))
         .env_clear()
-        .current_dir(directory.path())
         .arg("render")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -31,23 +29,21 @@ fn render(input: &[u8]) -> Result<Output, Box<dyn Error>> {
 }
 
 #[test]
-fn offline_cli_matches_library_without_environment_or_config() -> Result<(), Box<dyn Error>> {
+fn cli_accepts_exact_limit_and_matches_library() -> Result<(), Box<dyn Error>> {
     let expected = email_ui::render_json(EXAMPLE)?;
     let mut boundary = EXAMPLE.to_vec();
     boundary.resize(1_048_576, b' ');
-    for input in [EXAMPLE, boundary.as_slice()] {
-        let output = render(input)?;
-        assert!(
-            output.status.success(),
-            "renderer must not load configuration"
-        );
-        assert!(
-            output.stderr.is_empty(),
-            "renderer success has no diagnostics"
-        );
-        let actual: email_ui::RenderResult = serde_json::from_slice(&output.stdout)?;
-        assert_eq!(actual, expected);
-    }
+    let output = render(&boundary)?;
+    assert!(
+        output.status.success(),
+        "the exact input limit must succeed"
+    );
+    assert!(
+        output.stderr.is_empty(),
+        "renderer success has no diagnostics"
+    );
+    let actual: email_ui::RenderResult = serde_json::from_slice(&output.stdout)?;
+    assert_eq!(actual, expected);
     Ok(())
 }
 

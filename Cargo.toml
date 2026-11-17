@@ -15,9 +15,6 @@ serde_json = "1"
 thiserror = "2"
 url = "2"
 
-[dev-dependencies]
-tempfile = "3"
-
 [lints.rust]
 let_underscore_drop = "deny"
 unfulfilled_lint_expectations = "deny"
