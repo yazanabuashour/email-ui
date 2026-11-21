@@ -16,7 +16,7 @@ pub fn cards(output: &mut String, heading: &str, rows: &[Row]) {
             &row.url,
             "font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:20px;color:#202124;text-decoration:underline;text-decoration-color:#6d4aff;",
         );
-        let _result = write!(
+        let _row_result = write!(
             output,
             r#"<tr><td style="padding:10px 12px;border-bottom:1px solid {BORDER};">
 <div style="font-size:11px;line-height:15px;color:{SECONDARY};margin-bottom:3px;">{eyebrow}</div>
@@ -88,7 +88,7 @@ fn schedule_row(output: &mut String, row: &ScheduleRow) {
         &row.url,
         "font-size:14px;line-height:19px;font-weight:bold;color:#202124;text-decoration:underline;text-decoration-color:#6d4aff;",
     );
-    let _result = write!(
+    let _details_result = write!(
         output,
         r#"<td{colspan} valign="middle" style="padding:9px 10px;border-bottom:1px solid {BORDER};">
 {title}

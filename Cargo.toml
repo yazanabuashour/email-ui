@@ -9,17 +9,26 @@ readme = "README.md"
 publish = false
 
 [dependencies]
-clap = { version = "4", features = ["derive"] }
+clap = { version = "4.6.9", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"
-url = "2"
+url = "2.5.9"
 
 [lints.rust]
+elided_lifetimes_in_paths = "deny"
 let_underscore_drop = "deny"
+meta_variable_misuse = "deny"
+redundant_lifetimes = "deny"
+rust_2018_idioms = { level = "deny", priority = -1 }
+trivial_casts = "deny"
+trivial_numeric_casts = "deny"
 unfulfilled_lint_expectations = "deny"
+unit_bindings = "deny"
 unsafe_code = "deny"
 unsafe_op_in_unsafe_fn = "deny"
+unused_lifetimes = "deny"
+unused_qualifications = "deny"
 
 [lints.clippy]
 all = { level = "deny", priority = -1 }
@@ -42,8 +51,12 @@ exit = "deny"
 expect_used = "deny"
 field_scoped_visibility_modifiers = "deny"
 filetype_is_file = "deny"
+float_cmp_const = "deny"
 fn_to_numeric_cast_any = "deny"
+format_push_string = "deny"
+get_unwrap = "deny"
 host_endian_bytes = "deny"
+if_then_some_else_none = "deny"
 ignore_without_reason = "deny"
 indexing_slicing = "deny"
 infinite_loop = "deny"
@@ -61,8 +74,13 @@ panic_in_result_fn = "deny"
 partial_pub_fields = "deny"
 pointer_format = "deny"
 precedence_bits = "deny"
+rc_buffer = "deny"
+rc_mutex = "deny"
+renamed_function_params = "deny"
 rest_pat_in_fully_bound_structs = "deny"
 same_name_method = "deny"
+shadow_unrelated = "deny"
+str_to_string = "deny"
 string_slice = "deny"
 suspicious_xor_used_as_pow = "deny"
 todo = "deny"
@@ -75,7 +93,9 @@ unnecessary_safety_comment = "deny"
 unnecessary_safety_doc = "deny"
 unreachable = "deny"
 unused_result_ok = "deny"
+unwrap_in_result = "deny"
 unwrap_used = "deny"
+verbose_file_reads = "deny"
 wildcard_dependencies = "deny"
 wildcard_enum_match_arm = "deny"
 

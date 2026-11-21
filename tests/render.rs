@@ -53,6 +53,8 @@ fn urls_and_nested_fields_share_one_safe_contract() -> Result<(), Box<dyn std::e
         "https://example.test/ private-value-marker",
         "https://example.test\\private-value-marker?query=value",
         "https://example.test/path\\private-value-marker#fragment",
+        // Unicode data upgrades must not silently widen the accepted hostnames.
+        "https://\u{1dfd6}.example.test/",
         "//example.test/private-value-marker",
     ] {
         let mut changed = document.clone();
