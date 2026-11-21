@@ -15,6 +15,7 @@ serde_json = "1"
 thiserror = "2"
 url = "2.5.9"
 
+# BEGIN rust-lint-policy commit=71cb1dd6993833ca4ebb5c05661e19f5440aa2f3 sha256=093ad84c4a0b124099af1ff08dbb5c5fc640dd07e43c9e0dc43ee81801f0a423
 [lints.rust]
 elided_lifetimes_in_paths = "deny"
 let_underscore_drop = "deny"
@@ -98,6 +99,7 @@ unwrap_used = "deny"
 verbose_file_reads = "deny"
 wildcard_dependencies = "deny"
 wildcard_enum_match_arm = "deny"
+# END rust-lint-policy
 
 [profile.release]
 strip = true

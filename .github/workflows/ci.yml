@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: yazanabuashour/rust-lint-policy
+          ref: 71cb1dd6993833ca4ebb5c05661e19f5440aa2f3
+          path: .rust-lint-policy
+          persist-credentials: false
+      - run: python3 .rust-lint-policy/scripts/vendor.py . --check
+      - run: sudo apt-get update && sudo apt-get install --yes shellcheck
+      - run: rustup toolchain install --no-self-update
+      - run: ./scripts/check.sh
